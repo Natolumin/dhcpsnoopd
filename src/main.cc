@@ -11,7 +11,8 @@
 
 int main(int argc, char *argv[])
 {
-	auto configuration = read_configuration();
+	std::vector<std::string> arg_vec(argv, argv + argc);
+	auto configuration = read_configuration(arg_vec);
 
 	load_callbacks(configuration.callback_path);
 
