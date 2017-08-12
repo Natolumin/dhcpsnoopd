@@ -20,5 +20,5 @@ dhcpsnoopd 2 routehook.so
 (It might work with older versions, but I haven't tested it)
 
  * libmnl >= 1.0.4
- * libkea-dhcp++ >= 1.0
+ * libkea-dhcp++ >= 5.0.0 (kea 1.2)
  * Boost >= 1.44 (for Kea)
