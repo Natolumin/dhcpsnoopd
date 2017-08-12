@@ -21,3 +21,5 @@ target_link_libraries(${PROJECT_NAME}
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${Boost_SYSTEM_LIBRARY}
 )
+
+install(TARGETS ${PROJECT_NAME} DESTINATION "bin")
