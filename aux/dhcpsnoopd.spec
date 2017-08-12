@@ -25,10 +25,23 @@ dhcpsnoopd is a DHCPv6 snooping daemon, which calls whatever module you wish to 
 
 %install
 %make_install
+install -m0644 -D aux/dhcpsnoopd.service %{buildroot}%{_unitdir}/dhcpsnoopd.service
+install -m0644 -D aux/dhcpsnoopd.conf %{buildroot}%{_sysconfdir}/dhcpsnoopd.conf
+
+%post
+%systemd_post dhcpsnoopd.service
+
+%preun
+%systemd_preun dhcpsnoopd.service
+
+%postun
+%systemd_postun_with_restart dhcpsnoopd.service
 
 
 %files
 %doc README.md
+%config(noreplace) %{_sysconfdir}/dhcpsnoopd.conf
+%{_unitdir}/dhcpsnoopd.service
 
 %attr(550, root, root) %caps(CAP_NET_ADMIN=ep) %{_bindir}/%{name}
 
