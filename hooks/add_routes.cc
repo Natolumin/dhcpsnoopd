@@ -13,7 +13,7 @@ static mnl_socket *mnl_socket;
 static char *buf;
 
 static int inject_route(const struct in6_addr *prefix, const struct in6_addr *nexthop,
-			uint8_t prefix_len, uint32_t lifetime, uint32_t ifindex);
+                        uint8_t prefix_len, uint32_t lifetime, uint32_t ifindex);
 
 static inline int copy_addr(isc::asiolink::IOAddress src, struct in6_addr *dst);
 
@@ -62,9 +62,9 @@ void dhcp_callback(std::unique_ptr<isc::dhcp::Pkt6> packet)
 	}
 
 	std::cout << iaprefix.getAddress().toText() << "/" << (int32_t)iaprefix.getLength() << " "
-		  << "via " << packet->getRemoteAddr().toText() << " dev " << packet->getIface()
-		  << " proto dhcp metric 1024 expires " << iaprefix.getValid() << "sec pref medium"
-		  << std::endl;
+	          << "via " << packet->getRemoteAddr().toText() << " dev " << packet->getIface()
+	          << " proto dhcp metric 1024 expires " << iaprefix.getValid() << "sec pref medium"
+	          << std::endl;
 
 	if (inject_route(&prefix, &nexthop, prefix_len, lifetime, ifindex) < 0) {
 		std::cerr << "Could not inject route :( " << std::endl;
@@ -103,7 +103,7 @@ __attribute__((constructor)) static void setup_rtnl_socket()
 }
 
 static int inject_route(const struct in6_addr *prefix, const struct in6_addr *nexthop,
-			uint8_t prefix_len, uint32_t lifetime, uint32_t ifindex)
+                        uint8_t prefix_len, uint32_t lifetime, uint32_t ifindex)
 {
 	auto handle = mnl_nlmsg_put_header(buf);
 	handle->nlmsg_type = RTM_NEWROUTE;

@@ -116,8 +116,8 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 
 	try {
 		auto packet = std::make_unique<isc::dhcp::Pkt6>(pinfo.payload + offset,
-								pinfo.pl_len - offset,
-								isc::dhcp::Pkt6::DHCPv6Proto::UDP);
+		                                                pinfo.pl_len - offset,
+		                                                isc::dhcp::Pkt6::DHCPv6Proto::UDP);
 		packet->unpack();
 
 		// Remote/Local here for an output hook. Invert for an output hook
