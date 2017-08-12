@@ -1,6 +1,7 @@
 /* NF_LOG related functions, */
 
 #include "nflog.h"
+#include "callbacks.h"
 
 #include <arpa/inet.h>
 #include <iostream>
@@ -11,7 +12,6 @@
 #include <stdexcept>
 #include <thread>
 
-#include "callbacks.h"
 
 /*
  * The following code is included from the examples/netfilter folder distributed with nf_log, and is

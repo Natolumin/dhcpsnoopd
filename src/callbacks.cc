@@ -1,5 +1,8 @@
 #include "callbacks.h"
 
+// This needs to be first to define __USE_KERNEL_IPV6_DEFS
+#include <linux/ipv6.h>
+
 #include <arpa/inet.h>
 #include <dlfcn.h>
 #include <functional>
@@ -7,7 +10,6 @@
 #include <kea/asiolink/io_address.h>
 #include <kea/dhcp/pkt6.h>
 #include <libmnl/libmnl.h>
-#include <linux/ipv6.h>
 #include <linux/netfilter/nfnetlink_log.h>
 #include <linux/udp.h>
 #include <net/if.h>
