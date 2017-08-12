@@ -1,0 +1,56 @@
+{ "Dhcp6":
+
+{
+  "server-id": {
+    "type": "LLT",
+    "persist": false
+  },
+
+  "interfaces-config": {
+    "interfaces": [ "vethdhcp_h" ]
+  },
+
+  "lease-database": {
+      "type": "memfile",
+      "name": "/run/kea/leases6.csv",
+      "lfc-interval": 3600
+  },
+
+  "preferred-lifetime": 60 ,
+  "valid-lifetime": 120,
+  "renew-timer": 5,
+  "rebind-timer": 10,
+
+  "subnet6": [
+    {
+      "pools": [ { "pool": "2001:db8:1::/80" } ],
+      "subnet": "2001:db8::/32",
+      "pd-pools": [
+        {
+          "prefix": "2001:db8:100::",
+          "prefix-len": 48,
+          "delegated-len": 64
+        }
+      ],
+      "interface": "vethdhcp_h"
+    }
+  ]
+},
+
+"Logging": {
+    "loggers": [
+        {
+            "name": "kea-dhcp6",
+            "output_options": [
+                {
+                    "output": "stdout"
+                }
+            ],
+            "debuglevel": 2,
+            "severity": "DEBUG"
+        }
+    ]
+}
+
+}
+
