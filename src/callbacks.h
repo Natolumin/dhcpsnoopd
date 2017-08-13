@@ -3,10 +3,8 @@
 
 #include <functional>
 
-// We don't need this here, but we need it to be included before netinet/in.h to define __USE_KERNEL_IPV6_DEFS
-#include <linux/ipv6.h>
-
 #include <kea/dhcp/pkt6.h>
+#include <libmnl/libmnl.h>
 
 typedef std::unique_ptr<isc::dhcp::Pkt6> Pkt6Uptr;
 

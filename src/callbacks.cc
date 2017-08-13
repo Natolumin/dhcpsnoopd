@@ -1,9 +1,5 @@
 #include "callbacks.h"
 
-// This needs to be first to define __USE_KERNEL_IPV6_DEFS
-#include <linux/ipv6.h>
-
-#include <arpa/inet.h>
 #include <dlfcn.h>
 #include <functional>
 #include <iostream>
@@ -11,8 +7,9 @@
 #include <kea/dhcp/pkt6.h>
 #include <libmnl/libmnl.h>
 #include <linux/netfilter/nfnetlink_log.h>
-#include <linux/udp.h>
 #include <net/if.h>
+#include <netinet/ip6.h>
+#include <netinet/udp.h>
 
 bool cb_is_concurrent;
 std::function<void(Pkt6Uptr)> dhcp_callback;
@@ -73,7 +70,7 @@ static int parse_payload(const struct nlattr *attr, void *data)
 
 		pl_ptr = static_cast<uint8_t *>(mnl_attr_get_payload(attr));
 		try {
-			// ipv6hdr needs 4-byte alignment
+			// ip6_hdr needs 4-byte alignment
 			size_t size = lv->pl_len + 4;
 			void *buf = new uint8_t[size];
 			lv->payload = static_cast<uint8_t *>(std::align(4, lv->pl_len, buf, size));
@@ -106,15 +103,15 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 
 	/* Unpack the IP + UDP header */
 
-	auto offset = sizeof(struct ipv6hdr) + sizeof(struct udphdr);
+	auto offset = sizeof(struct ip6_hdr) + sizeof(struct udphdr);
 	if (pinfo.pl_len < offset)
 		return MNL_CB_ERROR;
 
-	struct ipv6hdr *ip_hdr = (struct ipv6hdr *)(pinfo.payload);
-	if (ip_hdr->nexthdr != IPPROTO_UDP) {
+	struct ip6_hdr *ip_hdr = (struct ip6_hdr *)(pinfo.payload);
+	if (ip_hdr->ip6_nxt != IPPROTO_UDP) {
 		return MNL_CB_ERROR;
 	}
-	struct udphdr *udp_hdr = (struct udphdr *)(pinfo.payload + sizeof(struct ipv6hdr));
+	struct udphdr *udp_hdr = (struct udphdr *)(pinfo.payload + sizeof(struct ip6_hdr));
 
 	try {
 		auto packet = std::make_unique<isc::dhcp::Pkt6>(pinfo.payload + offset,
@@ -124,9 +121,9 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 
 		// Remote/Local here for an output hook. Invert for an output hook
 		packet->setLocalAddr(
-		    isc::asiolink::IOAddress::fromBytes(AF_INET6, (uint8_t *)&(ip_hdr->saddr)));
+		    isc::asiolink::IOAddress::fromBytes(AF_INET6, (uint8_t *)&(ip_hdr->ip6_src)));
 		packet->setRemoteAddr(
-		    isc::asiolink::IOAddress::fromBytes(AF_INET6, (uint8_t *)&(ip_hdr->daddr)));
+		    isc::asiolink::IOAddress::fromBytes(AF_INET6, (uint8_t *)&(ip_hdr->ip6_dst)));
 		packet->setRemotePort(ntohs(udp_hdr->source));
 		packet->setLocalPort(ntohs(udp_hdr->dest));
 		packet->setIndex(pinfo.ifindex);

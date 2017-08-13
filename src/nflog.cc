@@ -3,7 +3,6 @@
 #include "nflog.h"
 #include "callbacks.h"
 
-#include <arpa/inet.h>
 #include <iostream>
 #include <libmnl/libmnl.h>
 #include <linux/netfilter.h>
@@ -12,11 +11,9 @@
 #include <stdexcept>
 #include <thread>
 
-
 /*
  * The following code is included from the examples/netfilter folder distributed with nf_log, and is
- * licensed under the
- * GPL2 as a result
+ * licensed under the LGPL2 as a result
  */
 
 static struct nlmsghdr *nflog_build_cfg_request(char *buf, uint8_t command, int qnum)
