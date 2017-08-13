@@ -45,11 +45,12 @@ void dhcp_callback(std::unique_ptr<isc::dhcp::Pkt6> packet)
 	}
 
 	// IA_PREFIX inside of IA_PD will hold the prefix_len, valid_lft and prefix values
-	auto odata = iapd->getOption(D6O_IAPREFIX)->toBinary();
-	if (odata.empty()) {
+	auto iaprefixopt = iapd->getOption(D6O_IAPREFIX);
+	if (!iaprefixopt) {
 		std::cerr << "No IA_PREFIX, ignoring" << std::endl;
 		return;
 	}
+	auto odata = iaprefixopt->toBinary();
 	auto iaprefix = isc::dhcp::Option6IAPrefix(D6O_IAPREFIX, odata.begin(), odata.end());
 
 	uint32_t lifetime = iaprefix.getValid();
