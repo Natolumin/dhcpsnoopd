@@ -1,4 +1,5 @@
-*.h.gch
+*.h.gch*
 .*.swp
 
 build/
+cmake_resources/
