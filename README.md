@@ -22,3 +22,11 @@ dhcpsnoopd 2 routehook.so
  * libmnl >= 1.0.4
  * libkea-dhcp++ >= 5.0.0 (kea 1.2)
  * Boost >= 1.44 (for Kea)
+
+## Provided hooks
+
+ * print_hook: Simply prints the packet out using the standard kea representation
+ * route_hook: Parses prefix delegation responses and adds routes in the kernel to allow routing to the prefixes that 
+   are delegated
+ * duid_hook: Records a mapping between mac address and DUID, for example to use in reservations. When using dhcp with a 
+   relay, this should be more reliable than the builtin detections in kea when privacy link-level addresses are used.
