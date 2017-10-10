@@ -6,6 +6,8 @@
 #include <kea/dhcp/pkt6.h>
 #include <libmnl/libmnl.h>
 
+#define ETHERNET_HTYPE 1
+
 typedef std::unique_ptr<isc::dhcp::Pkt6> Pkt6Uptr;
 
 extern bool cb_is_concurrent;

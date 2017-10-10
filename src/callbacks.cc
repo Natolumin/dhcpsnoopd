@@ -36,11 +36,11 @@ void load_callbacks(const std::string library_path)
 	}
 }
 
-// TODO: Add hwaddr to this struct
 struct pinfo {
 	uint32_t ifindex;
 	uint16_t pl_len;
 	uint8_t *payload;
+	struct nfulnl_msg_packet_hw hwaddr;
 };
 
 static int parse_payload(const struct nlattr *attr, void *data)
@@ -62,7 +62,18 @@ static int parse_payload(const struct nlattr *attr, void *data)
 		}
 		lv->ifindex = ntohl(mnl_attr_get_u32(attr));
 		break;
-
+	case NFULA_HWADDR:
+		if (mnl_attr_validate2(attr, MNL_TYPE_UNSPEC, sizeof(struct nfulnl_msg_packet_hw)) <
+		    0) {
+			return MNL_CB_ERROR;
+		}
+		{
+			auto pl =
+			    static_cast<struct nfulnl_msg_packet_hw *>(mnl_attr_get_payload(attr));
+			pl->hw_addrlen = ntohs(pl->hw_addrlen);
+			lv->hwaddr = *pl;
+		}
+		break;
 	case NFULA_PAYLOAD:
 		lv->pl_len = mnl_attr_get_payload_len(attr);
 		if (!lv->pl_len)
@@ -90,7 +101,7 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 {
 	assert(dhcp_callback);
 
-	struct pinfo pinfo = {0, 0, nullptr};
+	struct pinfo pinfo = {0, 0, nullptr, 0, 0, 0};
 
 	if (mnl_attr_parse(header, 0, parse_payload, &pinfo) <= MNL_CB_ERROR) {
 		return MNL_CB_ERROR;
@@ -119,6 +130,14 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 		                                                isc::dhcp::Pkt6::DHCPv6Proto::UDP);
 		packet->unpack();
 
+		if (pinfo.hwaddr.hw_addrlen &&
+		    pinfo.hwaddr.hw_addrlen <= sizeof(pinfo.hwaddr.hw_addr)) {
+			packet->setRemoteHWAddr(
+			    ETHERNET_HTYPE,
+			    pinfo.hwaddr.hw_addrlen,
+			    std::vector<uint8_t>(pinfo.hwaddr.hw_addr,
+			                         pinfo.hwaddr.hw_addr + pinfo.hwaddr.hw_addrlen));
+		}
 		// Remote/Local here for an output hook. Invert for an output hook
 		packet->setLocalAddr(
 		    isc::asiolink::IOAddress::fromBytes(AF_INET6, (uint8_t *)&(ip_hdr->ip6_src)));
