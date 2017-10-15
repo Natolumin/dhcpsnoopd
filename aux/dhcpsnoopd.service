@@ -6,3 +6,6 @@ Environment=NFLOG_GROUP=2
 Environment=HOOK_NAME=print
 EnvironmentFile=-/etc/dhcpsnoopd.conf
 ExecStart=/usr/bin/dhcpsnoopd ${NFLOG_GROUP} /usr/lib64/dhcpsnoopd/modules/lib${HOOK_NAME}_hook.so
+
+[Install]
+WantedBy=multi-user.target
