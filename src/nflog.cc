@@ -49,7 +49,7 @@ static struct nlmsghdr *nflog_build_cfg_params(char *buf, uint8_t mode, int rang
 	nfg->res_id = htons(qnum);
 
 	struct nfulnl_msg_config_mode params = {
-	    .copy_range = htonl(range), .copy_mode = mode,
+	    .copy_range = htonl(range), .copy_mode = mode, ._pad = 0,
 	};
 	mnl_attr_put(nlh, NFULA_CFG_MODE, sizeof(params), &params);
 

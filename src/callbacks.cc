@@ -101,7 +101,7 @@ int callback_shim(const struct nlmsghdr *header, __attribute__((unused)) void *d
 {
 	assert(dhcp_callback);
 
-	struct pinfo pinfo = {0, 0, nullptr, 0, 0, 0};
+	struct pinfo pinfo = {};
 
 	if (mnl_attr_parse(header, 0, parse_payload, &pinfo) <= MNL_CB_ERROR) {
 		return MNL_CB_ERROR;
