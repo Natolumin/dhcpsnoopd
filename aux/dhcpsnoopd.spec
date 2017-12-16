@@ -10,6 +10,7 @@ Source0:        https://github.com/Natolumin/dhcpsnoopd/archive/%{name}-%{versio
 BuildRequires:  kea-devel >= 1.2.0
 BuildRequires:  libmnl-devel
 BuildRequires:  systemd
+BuildRequires:  cmake
 
 %description
 dhcpsnoopd is a DHCPv6 snooping daemon, which calls whatever module you wish to define in a callback library
